@@ -13,7 +13,7 @@ public class Cart {
     private Long id;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "cart")
-    private Set<CartItem> items;
+    private Set<Position> items;
 
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -30,11 +30,11 @@ public class Cart {
         this.id = id;
     }
 
-    public Set<CartItem> getItems() {
+    public Set<Position> getItems() {
         return items;
     }
 
-    public void setItems(Set<CartItem> items) {
+    public void setItems(Set<Position> items) {
         this.items = items;
     }
 
