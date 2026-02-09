@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add-foreign-key-to-table-cart" author="Vladyslav Kravchenko">
+        <addForeignKeyConstraint
+                baseTableName="cart"
+                baseColumnNames="customer_id"
+                constraintName="fk_cart_customer"
+                referencedTableName="customer"
+                referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="position"
+                baseColumnNames="cart_id"
+                constraintName="fk_position_cart"
+                referencedTableName="cart"
+                referencedColumnNames="id"/>
+
+        <createIndex
+                tableName="cart" indexName="idx_cart_customer_id">
+            <column name="customer_id"/>
+        </createIndex>
+
+        <createIndex
+                tableName="position" indexName="idx_position_cart_id">
+            <column name="cart_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>
+
+<!--
+<addForeignKeyConstraint
+    baseTableName="cart"              // Таблиця, В ЯКІЙ ми зараз створюємо обмеження (де лежить копія ключа)
+    baseColumnNames="customer_id"     // Назва колонки В ЦІЙ таблиці, яка буде зберігати посилання
+    constraintName="fk_cart_customer" // Унікальне ім'я цього "ланцюга" в базі (щоб його можна було видалити чи змінити)
+    referencedTableName="customer"    // Таблиця, НА ЯКУ ми посилаємось (головна таблиця покупців)
+    referencedColumnNames="id"/>      // Назва головної колонки в тій таблиці (зазвичай це завжди id)
+
+<addForeignKeyConstraint
+    baseTableName="position"       // Таблиця, де лежать товари (позиції)
+    baseColumnNames="cart_id"      // Колонка в товарах, де ми запишемо номер кошика
+    constraintName="fk_position_cart" // Ім'я зв'язку (традиція: fk_звідки_куди)
+    referencedTableName="cart"     // Посилаємось на таблицю кошиків
+    referencedColumnNames="id"/>   // Посилаємось на первинний ключ кошика
+
+<createIndex
+    tableName="cart"               // В якій таблиці створюємо індекс (прискорювач)
+    indexName="idx_cart_customer_id"> // Назва цього індексу в системі (idx_таблиця_колонка)
+    <column name="customer_id"/>   // Яку саме колонку ми хочемо проіндексувати (прискорити)
+</createIndex>
+
+<createIndex
+    tableName="position"           // Таблиця з товарами
+    indexName="idx_position_cart_id"> // Назва індексу
+    <column name="cart_id"/>       // Колонка, за якою ми будемо постійно шукати
+</createIndex>
+-->

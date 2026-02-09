@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="add-foreign-keys-to-table-position" author="Andrey Pomelov">
+<!--  Ці команди створюють «ланцюги» між таблицями.-->
+<!--  З'єднай товари (position) з кошиками та продуктами."-->
+<!--  Каже, що колонка cart_id у таблиці position — це не просто число,
+а посилання на id у таблиці cart. Це гарантує, що ти не зможеш додати товар у кошик, якого не існує.-->
+        <addForeignKeyConstraint baseTableName="position"
+                                 baseColumnNames="cart_id"
+                                 constraintName="fk_position_to_cart"
+                                 referencedTableName="cart"
+                                 referencedColumnNames="id"/>
+
+<!-- Робить те саме для продуктів. Колонка product_id посилається на таблицю product. -->
+        <addForeignKeyConstraint baseTableName="position"
+                                 baseColumnNames="product_id"
+                                 constraintName="fk_position_to_product"
+                                 referencedTableName="product"
+                                 referencedColumnNames="id"/>
+
+<!-- Зроби пошук по цих товарах швидким за допомогою індексів. -->
+        <createIndex tableName="position" indexName="idx_position_cart_id">
+            <column name="cart_id"/>
+        </createIndex>
+
+        <createIndex tableName="position" indexName="idx_position_product_id">
+            <column name="product_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
+
+        <!--
+<addForeignKeyConstraint
+    baseTableName="position"        // ТАБЛИЦЯ-ДИТИНА: де ми зараз створюємо запис (позиція в кошику)
+    baseColumnNames="cart_id"       // КОЛОНКА-ПРИВ'ЯЗКА: номер кошика, який ми вписали в цю позицію
+    constraintName="fk_position_to_cart" // ІМ'Я "ЗАМКА": назва цього зв'язку в базі даних
+    referencedTableName="cart"      // ТАБЛИЦЯ-БАТЬКО: куди ми дивимось (таблиця всіх кошиків)
+    referencedColumnNames="id"/>    // ЦІЛЬ: номер (ID) конкретного кошика, до якого ми прив'язалися
+
+<addForeignKeyConstraint
+    baseTableName="position"        // ТАБЛИЦЯ-ДИТИНА: та сама таблиця позицій
+    baseColumnNames="product_id"    // КОЛОНКА-ПРИВ'ЯЗКА: ID продукту (наприклад, iPhone чи Молоко)
+    constraintName="fk_position_to_product" // ІМ'Я "ЗАМКА": щоб база знала, як цей зв'язок називається
+    referencedTableName="product"   // ТАБЛИЦЯ-КАТАЛОГ: де зберігаються всі описи товарів, ціни тощо
+    referencedColumnNames="id"/>    // ЦІЛЬ: ID конкретного продукту з каталогу
+
+<createIndex
+    tableName="position"            // ДЕ ШУКАЄМО: у великій таблиці з усіма товарами всіх користувачів
+    indexName="idx_position_cart_id"> // НАЗВА ПОКАЖЧИКА: як називається наш "швидкий зміст"
+    <column name="cart_id"/>        // ЩО ПРИСКОРЮЄМО: пошук за номером кошика
+</createIndex>
+
+<createIndex
+    tableName="position"            // ДЕ ШУКАЄМО: у таблиці позицій
+    indexName="idx_position_product_id"> // НАЗВА ПОКАЖЧИКА: для пошуку за товаром
+    <column name="product_id"/>     // ЩО ПРИСКОРЮЄМО: пошук за ID продукту
+</createIndex>
+
+        -->
