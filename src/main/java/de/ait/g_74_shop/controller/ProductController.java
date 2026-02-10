@@ -1,6 +1,5 @@
 package de.ait.g_74_shop.controller;
 
-
 import de.ait.g_74_shop.domain.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
