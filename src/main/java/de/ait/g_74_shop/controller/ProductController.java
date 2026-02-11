@@ -1,6 +1,7 @@
 package de.ait.g_74_shop.controller;
 
 import de.ait.g_74_shop.domain.Product;
+import de.ait.g_74_shop.service.interfaces.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,13 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    // тут буде поле із сервісом продуктів щоб контролер
-    // міг звертатися до серверу і визивати його методи
+    // прописуємо поле із сервісом, і не створюємо обєкт як і у ProductServiceImpl
+    private final ProductService service;
+
+    // ств під ProductService конструктор
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
 
     /// Сохранить продукт в базе данных (при сохранении продукт автоматически считается активным).
     /// POST -> http://10.20.30.40:8080/products ожидаем тело запроса
@@ -23,19 +29,20 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED) // щоб приходив статус 201 Created, а не 200
     // прописуємо анотацію RequestBody - спринг розуміє що коли він отримає запрос(тіло обєкта) і передає джексону....
     public Product save(@RequestBody Product product) {
+//        System.out.println("На вход пришел продукт:" + product);
+//        return null;
 
-        // Здесь будет вызов сервиса и метода для сохранения в БД продукта
-        System.out.println("На вход пришел продукт:");
-        System.out.println(product);
-        return null;
+        return service.save(product);
     }
 
     /// Вернуть все продукты из базы данных (активные).
     /// GET -> http://10.20.30.40:8080/products
     @GetMapping
     public List<Product> getAll() {
-        System.out.println("Запрошены все продукты");
-        return null;
+//        System.out.println("Запрошены все продукты");
+//        return null;
+
+        return service.getAllActiveProducts();
     }
 
     /// Вернуть один продукт из базы данных по его идентификатору (если он активен).
