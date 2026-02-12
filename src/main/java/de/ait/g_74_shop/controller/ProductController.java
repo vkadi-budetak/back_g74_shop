@@ -31,7 +31,6 @@ public class ProductController {
     public Product save(@RequestBody Product product) {
 //        System.out.println("На вход пришел продукт:" + product);
 //        return null;
-
         return service.save(product);
     }
 
@@ -41,7 +40,6 @@ public class ProductController {
     public List<Product> getAll() {
 //        System.out.println("Запрошены все продукты");
 //        return null;
-
         return service.getAllActiveProducts();
     }
 
@@ -51,17 +49,18 @@ public class ProductController {
     @GetMapping("/{id}")
     // Використаємо анатоцію @PathVariable - відповідає за змінну шляху
     public Product getById(@PathVariable Long id) {
-
-        System.out.println("Запрошен продукт с ид " + id);
-        return null;
+//        System.out.println("Запрошен продукт с ид " + id);
+//        return null;
+        return service.getActiveProductById(id);
     }
 
     /// Изменить один продукт в базе данных по его идентификатору.
     /// PUT -> http://10.20.30.40:8080/products/5 -> ожидаем тело с новыми значениями для абдейта
     @PutMapping("/{id}")
     public void update(@PathVariable Long id, @RequestBody Product product) {
-        System.out.println("Пришел запрос на изменения продукта с ид " + id);
-        System.out.println("Новая цена продукта - " + product.getPrice());
+//        System.out.println("Пришел запрос на изменения продукта с ид " + id);
+//        System.out.println("Новая цена продукта - " + product.getPrice());
+        service.update(id, product);
     }
 
     /// Удалить продукт из базы данных по его идентификатору.
@@ -69,32 +68,35 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable Long id) {
+        service.deleteById(id);
     }
 
     /// Восстановить удалённый продукт в базе данных по его идентификатору.
     /// PUT -> http://10.20.30.40:8080/products/5/restore
     @PutMapping("/{id}/restore")
     public void restoreById(@PathVariable Long id) {
+        service.restoreById(id);
     }
 
     /// Вернуть общее количество продуктов в базе данных (активных).
     /// GET -> http://10.20.30.40:8080/products/count
     @GetMapping("/count")
-    public int getProductQuantity() {
-        return 0;
+    public long getProductQuantity() {
+//        return 0;
+        return service.getAllActiveProductsCount();
     }
 
     /// Вернуть суммарную стоимость всех продуктов в базе данных (активных).
     /// GET -> http://10.20.30.40:8080/products/total-cost
     @GetMapping("/total-cost")
-    public BigDecimal getProductTotalCost() {
-        return null;
+    public BigDecimal getProductsTotalCost() {
+        return service.getAllActiveProductsTotalCost();
     }
 
     /// Вернуть среднюю стоимость продукта в базе данных (из активных).
     /// GET -> http://10.20.30.40:8080/products/avg
     @GetMapping("/avg")
     public BigDecimal getProductAveragePrice() {
-        return null;
+        return service.getAllActiveProductsAveragePrice();
     }
 }

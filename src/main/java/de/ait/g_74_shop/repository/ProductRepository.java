@@ -18,11 +18,12 @@ import java.util.Optional;
    и помещает его в Spring Context.
  */
 
-// В JpaRepository обовязково прописуємо типи з яким продуктом працюємо а другий тип який тип id
+// В JpaRepository обовязково прописуємо типи з яким продуктом працюємо, а другий тип який тип id
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findAllByActiveTrue(); // імя метода повинна бути вірною щоб технологія знала що потрібно робити
-    Optional<Product> findByIdAndActiveTrue(Long id); // метод знаходе мені продукт в базі даниї який = моєму id і він активний
+    // імя метода повинна бути вірною щоб технологія знала що потрібно робити
+    List<Product> findAllByActiveTrue(); // метод повертає к-сть активних продуктів
+    Optional<Product> findByIdAndActiveTrue(Long id); // метод знаходе мені продукт в базі даних який = моєму id і він активний
     long countByActiveTrue(); // від бази прийде одне число
 
 

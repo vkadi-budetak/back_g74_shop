@@ -29,7 +29,7 @@ public interface ProductService {
     long getAllActiveProductsCount();
 
     //    Вернуть суммарную стоимость всех продуктов в базе данных (активных).
-    BigDecimal getAllActiveProductsTotalCoast();
+    BigDecimal getAllActiveProductsTotalCost();
 
     //    Вернуть среднюю стоимость продукта в базе данных (из активных).
     BigDecimal getAllActiveProductsAveragePrice();
