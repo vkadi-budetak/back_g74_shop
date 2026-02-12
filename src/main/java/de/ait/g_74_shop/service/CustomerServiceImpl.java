@@ -1,8 +1,10 @@
 package de.ait.g_74_shop.service;
 
 import de.ait.g_74_shop.domain.Customer;
+import de.ait.g_74_shop.domain.Position;
 import de.ait.g_74_shop.repository.CustomerRepository;
 import de.ait.g_74_shop.service.interfaces.CustomerService;
+import de.ait.g_74_shop.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,12 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository repository;
+    private final ProductService service;
 
-    public CustomerServiceImpl(CustomerRepository repository) {
+
+    public CustomerServiceImpl(CustomerRepository repository, ProductService service) {
         this.repository = repository;
+        this.service = service;
     }
 
     @Override
@@ -63,21 +68,32 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public BigDecimal getAllActiveCustomersTotalCost() {
-        return null;
+    public BigDecimal getAllActiveCustomersTotalCost(Long id) {
+        Customer customer = getActiveCustomerById(id);
+        if (customer == null || customer.getCart() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return customer.getCart().getItems().stream()
+                .map(position -> position.getProduct().getPrice()
+                        .multiply(BigDecimal.valueOf(position.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
-    public BigDecimal getAllActiveCustomersAveragePrice() {
-        long customerCount = getAllActiveCustomersCount();
-
-        if (customerCount == 0) {
+    public BigDecimal getAllActiveCustomersAveragePrice(Long id) {
+        Customer customer = getActiveCustomerById(id);
+        if (customer == null || customer.getCart() == null || customer.getCart().getItems().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getAllActiveCustomersTotalCost().divide(
-                BigDecimal.valueOf(customerCount),
-                2, RoundingMode.HALF_UP
-        );
+
+        BigDecimal totalCost = getAllActiveCustomersTotalCost(id);
+
+        int totalQuantity = customer.getCart().getItems().stream()
+                .mapToInt(Position::getQuantity)
+                .sum();
+
+        return totalCost.divide(BigDecimal.valueOf(totalQuantity), 2, RoundingMode.HALF_UP);
     }
 
     @Override
@@ -93,6 +109,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void clearBasket(Long customerId) {
-
+        Customer customer = getActiveCustomerById(customerId);
+        if (customer != null && customer.getCart() != null) {
+            customer.getCart().getItems().clear(); // Просто очищаємо список позицій
+        }
     }
 }

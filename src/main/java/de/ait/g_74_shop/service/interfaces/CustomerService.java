@@ -1,7 +1,6 @@
 package de.ait.g_74_shop.service.interfaces;
 
 import de.ait.g_74_shop.domain.Customer;
-import de.ait.g_74_shop.domain.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,10 +29,10 @@ public interface CustomerService {
     long getAllActiveCustomersCount();
 
     //    Вернуть стоимость корзины покупателя по его идентификатору.
-    BigDecimal getAllActiveCustomersTotalCost();
+    BigDecimal getAllActiveCustomersTotalCost(Long id);
 
     //    Вернуть среднюю стоимость продукта в корзине покупателя по его идентификатору.
-    BigDecimal getAllActiveCustomersAveragePrice();
+    BigDecimal getAllActiveCustomersAveragePrice(Long id);
 
     //    Добавить товар в корзину покупателя по их идентификаторам.
     void addProductToBasketById(Long customerId, long productId, Integer quantity);

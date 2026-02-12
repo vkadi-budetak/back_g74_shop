@@ -2,7 +2,7 @@ package de.ait.g_74_shop.dto.product;
 
 import java.math.BigDecimal;
 
-
+// служить для передачі даних клієнту
 public class ProductDto {
 
     // прописуємо які поля ми будемо віддавати клієнту
@@ -40,8 +40,7 @@ public class ProductDto {
 
     @Override
     public String toString() {
-        // Product: id - 5, title - Banana, price - 100.00, active - yes
-        return String.format("Product DTO: id - %d, title - %s, price - %.2f, ",
+        return String.format("Product DTO: id - %d, title - %s, price - %.2f",
                 id, title, price);
     }
 }

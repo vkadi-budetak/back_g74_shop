@@ -19,3 +19,15 @@
     </changeSet>
 </databaseChangeLog>
 
+<!--
+<changeSet id="create-table-cart" author="Andrey Pomelov">
+        <createTable tableName="cart">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="customer_id" type="bigint">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>-->
