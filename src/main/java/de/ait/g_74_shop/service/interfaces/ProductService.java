@@ -1,6 +1,9 @@
 package de.ait.g_74_shop.service.interfaces;
 
 import de.ait.g_74_shop.domain.Product;
+import de.ait.g_74_shop.dto.product.ProductDto;
+import de.ait.g_74_shop.dto.product.ProductSaveDto;
+import de.ait.g_74_shop.dto.product.ProductUpdateDto;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,16 +11,16 @@ import java.util.List;
 public interface ProductService {
 
     //    Сохранить продукт в базе данных (при сохранении продукт автоматически считается активным).
-    Product save(Product product);
+    ProductDto save(ProductSaveDto product);
 
     //    Вернуть все продукты из базы данных (активные).
-    List<Product> getAllActiveProducts();
+    List<ProductDto> getAllActiveProducts();
 
     //    Вернуть один продукт из базы данных по его идентификатору (если он активен).
-    Product getActiveProductById(Long id);
+    ProductDto getActiveProductById(Long id);
 
     //    Изменить один продукт в базе данных по его идентификатору.
-    void update(Long id, Product product);
+    void update(Long id, ProductUpdateDto product);
 
     //    Удалить продукт из базы данных по его идентификатору.
     void deleteById(Long id);

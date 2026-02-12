@@ -1,6 +1,8 @@
 package de.ait.g_74_shop.controller;
 
-import de.ait.g_74_shop.domain.Product;
+import de.ait.g_74_shop.dto.product.ProductDto;
+import de.ait.g_74_shop.dto.product.ProductSaveDto;
+import de.ait.g_74_shop.dto.product.ProductUpdateDto;
 import de.ait.g_74_shop.service.interfaces.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,16 +30,16 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // щоб приходив статус 201 Created, а не 200
     // прописуємо анотацію RequestBody - спринг розуміє що коли він отримає запрос(тіло обєкта) і передає джексону....
-    public Product save(@RequestBody Product product) {
+    public ProductDto save(@RequestBody ProductSaveDto saveDto) {
 //        System.out.println("На вход пришел продукт:" + product);
 //        return null;
-        return service.save(product);
+        return service.save(saveDto);
     }
 
     /// Вернуть все продукты из базы данных (активные).
     /// GET -> http://10.20.30.40:8080/products
     @GetMapping
-    public List<Product> getAll() {
+    public List<ProductDto> getAll() {
 //        System.out.println("Запрошены все продукты");
 //        return null;
         return service.getAllActiveProducts();
@@ -48,19 +50,19 @@ public class ProductController {
     // @GetMapping("/{id}") - інструкція - при виклику id взяти передану цифру і передати в параметр
     @GetMapping("/{id}")
     // Використаємо анатоцію @PathVariable - відповідає за змінну шляху
-    public Product getById(@PathVariable Long id) {
+    public ProductDto getById(@PathVariable Long id) {
 //        System.out.println("Запрошен продукт с ид " + id);
 //        return null;
-        return service.getActiveProductById(id);
+       return service.getActiveProductById(id);
     }
 
     /// Изменить один продукт в базе данных по его идентификатору.
     /// PUT -> http://10.20.30.40:8080/products/5 -> ожидаем тело с новыми значениями для абдейта
     @PutMapping("/{id}")
-    public void update(@PathVariable Long id, @RequestBody Product product) {
+    public void update(@PathVariable Long id, @RequestBody ProductUpdateDto updateDto) {
 //        System.out.println("Пришел запрос на изменения продукта с ид " + id);
 //        System.out.println("Новая цена продукта - " + product.getPrice());
-        service.update(id, product);
+        service.update(id, updateDto);
     }
 
     /// Удалить продукт из базы данных по его идентификатору.
