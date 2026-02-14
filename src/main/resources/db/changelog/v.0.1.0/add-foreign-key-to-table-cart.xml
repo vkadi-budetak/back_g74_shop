@@ -13,36 +13,6 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <!--    ВИДАЛИТИ!!!-->
-    <!--    <changeSet id="add-foreign-key-to-table-cart" author="Vladyslav Kravchenko">-->
-    <!--        <addForeignKeyConstraint-->
-    <!--                baseTableName="cart"-->
-    <!--                baseColumnNames="customer_id"-->
-    <!--                constraintName="fk_cart_customer"-->
-    <!--                referencedTableName="customer"-->
-    <!--                referencedColumnNames="id"/>-->
-
-
-    <!--        <addForeignKeyConstraint-->
-    <!--                baseTableName="position"-->
-    <!--                baseColumnNames="cart_id"-->
-    <!--                constraintName="fk_position_cart"-->
-    <!--                referencedTableName="cart"-->
-    <!--                referencedColumnNames="id"/>-->
-
-    <!--        <createIndex-->
-    <!--                tableName="cart" indexName="idx_cart_customer_id">-->
-    <!--            <column name="customer_id"/>-->
-    <!--        </createIndex>-->
-
-    <!--        <createIndex-->
-    <!--                tableName="position" indexName="idx_position_cart_id">-->
-    <!--            <column name="cart_id"/>-->
-    <!--        </createIndex>-->
-
-    <!--    </changeSet>-->
-    <!--    ВИДАЛИТИ!!!-->
-
 </databaseChangeLog>
 
         <!--

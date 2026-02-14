@@ -29,6 +29,9 @@ public class Position {
     public Position() {
     }
 
+    public Position(Product product, int quantity, Cart cart) {
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,6 +1,9 @@
 package de.ait.g_74_shop.service.interfaces;
 
-import de.ait.g_74_shop.domain.Customer;
+import de.ait.g_74_shop.dto.customer.CustomerDto;
+import de.ait.g_74_shop.dto.customer.CustomerSaveDto;
+import de.ait.g_74_shop.dto.customer.CustomerUpdateDto;
+import de.ait.g_74_shop.dto.position.PositionUpdateDto;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,38 +11,38 @@ import java.util.List;
 public interface CustomerService {
 
     //    Сохранить покупателя в базе данных.
-    Customer saveCustomer(Customer customer);
+    CustomerDto save(CustomerSaveDto customer);
 
     //    Вернуть всех покупателей из базы данных.
-    List<Customer> getAllCustomers();
+    List<CustomerDto> getAllActiveCustomers();
 
     //    Вернуть одного покупателя из базы данных по его идентификатору.
-    Customer getActiveCustomerById(Long id);
+    CustomerDto getActiveCustomerById(Long id);
 
     //    Изменить одного покупателя в базе данных по его идентификатору.
-    void updateCustomer(Long id, Customer customer);
+    void update(Long id, CustomerUpdateDto customer);
 
     //    Удалить покупателя из базы данных по его идентификатору.
-    void deleteCustomerById(Long id);
+    void deleteById(Long id);
 
     //    Восстановить удалённого покупателя в базе данных по его идентификатору.
-    void restoreCustomerById(Long id);
+    void restoreById(Long id);
 
     //    Вернуть общее количество покупателей в базе данных.
     long getAllActiveCustomersCount();
 
     //    Вернуть стоимость корзины покупателя по его идентификатору.
-    BigDecimal getAllActiveCustomersTotalCost(Long id);
+    BigDecimal getCustomerCartTotalCost(Long id);
 
     //    Вернуть среднюю стоимость продукта в корзине покупателя по его идентификатору.
-    BigDecimal getAllActiveCustomersAveragePrice(Long id);
+    BigDecimal getCustomerProductsAveragePrice(Long id);
 
     //    Добавить товар в корзину покупателя по их идентификаторам.
-    void addProductToBasketById(Long customerId, long productId, Integer quantity);
+    void addProductToCustomerCart(Long customerId, Long productId, PositionUpdateDto positionUpdateDto);
 
     //    Удалить товар из корзины покупателя по их идентификаторам.
-    void removeProductToBasketById(Long customerId, Long productId, Integer quantity);
+    void removeProductFromCustomerCart(Long customerId, Long productId, PositionUpdateDto positionUpdateDto);
 
     //    Полностью очистить корзину покупателя по его идентификатору.
-    void clearBasket(Long customerId);
+    void clearCustomerCart(Long id);
 }

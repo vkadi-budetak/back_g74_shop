@@ -2,6 +2,8 @@ package de.ait.g_74_shop.domain;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -10,10 +12,11 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "cart")
-    private Set<Position> items;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "cart", orphanRemoval = true)
+    private Set<Position> positions = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false)
@@ -30,12 +33,12 @@ public class Cart {
         this.id = id;
     }
 
-    public Set<Position> getItems() {
-        return items;
+    public Set<Position> getPositions() {
+        return positions;
     }
 
-    public void setItems(Set<Position> items) {
-        this.items = items;
+    public void setPositions(Set<Position> positions) {
+        this.positions = positions;
     }
 
     public Customer getCustomer() {
@@ -47,14 +50,16 @@ public class Cart {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
 
-        if (!(o instanceof Cart cart)) return false;
+        if (!(o instanceof Cart cart)) {
+            return false;
+        }
 
-        return id != null && id.equals(cart.id);
+        return id != null && Objects.equals(id, cart.id);
     }
 
     @Override
@@ -64,6 +69,6 @@ public class Cart {
 
     @Override
     public String toString() {
-        return String.format("Cart: id - %d, items - %s", id, items);
+        return String.format("Cart: id - %d, positions - %d", id, positions.size());
     }
 }

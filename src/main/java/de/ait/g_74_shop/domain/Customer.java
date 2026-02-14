@@ -1,7 +1,8 @@
 package de.ait.g_74_shop.domain;
 
-
 import jakarta.persistence.*;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "customer")
@@ -12,7 +13,7 @@ public class Customer {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "active")
@@ -57,13 +58,16 @@ public class Customer {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Customer customer)) return false;
 
-        return id != null && id.equals(customer.id);
+        if (!(o instanceof Customer customer)) {
+            return false;
+        }
+
+        return id != null && Objects.equals(id, customer.id);
     }
 
     @Override
@@ -73,15 +77,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return String.format("Customer: id - %d, Name - %s, active - %s", id, name, active ? "yes" : "no");
+        return String.format("Customer: id - %d, name - %s, active - %s, cart - %s",
+                id, name, active ? "yes" : "no", cart);
     }
 }
-
-
-//Разработать класс Customer (покупатель), поля:
-//идентификатор (Long)
-//имя (String)
-//активен (boolean)
-
-//корзина (Cart), отношение: один к одному -
-// @OneToOne(cascade = CascadeType.ALL, mappedBy = "customer")

@@ -8,6 +8,8 @@ import de.ait.g_74_shop.dto.product.ProductUpdateDto;
 import de.ait.g_74_shop.repository.ProductRepository;
 import de.ait.g_74_shop.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,12 +38,14 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    private final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class); // в якому клысі відбуваться подія
+
     // ми пишемо поле репозиотрія, але самі не ств обєкт репозиторія. Він ств при запуску проекта самостійно!
     private final ProductRepository repository;
     private final ProductMapper mapper;
 
     // ств конструктор
-    public ProductServiceImpl(ProductRepository repository,  ProductMapper mapper) {
+    public ProductServiceImpl(ProductRepository repository, ProductMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
@@ -52,6 +56,13 @@ public class ProductServiceImpl implements ProductService {
         Product entity = mapper.mapDtoToEntity(saveDto);
         entity.setActive(true);
         repository.save(entity);
+
+        // Не всегда стоит логировать обьект целикомм так как он может быть
+        // очень большим. Иногда стоит логировать только определенные
+        // параметры обьекта или вообще только его идентификатор
+        // прописуємо подію logger вручну
+        logger.info("Product saved to the database: {}", entity);
+
         return mapper.mapEntityToDto(entity);
     }
 
@@ -65,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-    public Product getActiveEntityById(Long id){
+    public Product getActiveEntityById(Long id) {
         // в репозиторію ств findByIdAndActiveTrue
 //        return repository.findByIdAndActiveTrue(id).orElse(null);
         // orElse - повертає сам продукт якщо він знайшовся або null якщо він знайшовся але не автивний
@@ -93,6 +104,11 @@ public class ProductServiceImpl implements ProductService {
         // findById(id): Spring Data JPA йде в базу і шукає рядок з цим ID. Повертає Optional<Customer>
         // ifPresent - якщо є щось в коробці (Option), тобто продукт знайдений,
         // до нього відпрацьовує функція. Якщо нічого не знайшлося, то ifPresent не відпрацює.
+
+
+        // прописуємо подію logger вручну
+        logger.info("Product id {} updated, new price: {}", id, updateDto.getNewPrice());
+
     }
 
     @Override
@@ -106,12 +122,18 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setActive(false);
 
+        // прописуємо подію logger вручну
+        logger.info("Product id {} marked as inactive", id);
+
     }
 
     @Override
     public void restoreById(Long id) {
         repository.findById(id)
                 .ifPresent(x -> x.setActive(true));
+
+        // прописуємо подію logger вручну
+        logger.info("Product id {} marked as active", id);
 
     }
 

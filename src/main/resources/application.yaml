@@ -9,3 +9,10 @@ spring:
     password: qwerty007
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
+
+logging:
+  file:
+    name: logs/log.log
+  level:
+    root: debug
+

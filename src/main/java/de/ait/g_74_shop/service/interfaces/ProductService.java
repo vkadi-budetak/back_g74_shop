@@ -11,16 +11,19 @@ import java.util.List;
 public interface ProductService {
 
     //    Сохранить продукт в базе данных (при сохранении продукт автоматически считается активным).
-    ProductDto save(ProductSaveDto product);
+    ProductDto save(ProductSaveDto saveDto);
 
     //    Вернуть все продукты из базы данных (активные).
     List<ProductDto> getAllActiveProducts();
 
     //    Вернуть один продукт из базы данных по его идентификатору (если он активен).
+    Product getActiveEntityById(Long id);
+
+    //    Вернуть один продукт из базы данных по его идентификатору (если он активен).
     ProductDto getActiveProductById(Long id);
 
     //    Изменить один продукт в базе данных по его идентификатору.
-    void update(Long id, ProductUpdateDto product);
+    void update(Long id, ProductUpdateDto updateDto);
 
     //    Удалить продукт из базы данных по его идентификатору.
     void deleteById(Long id);
@@ -36,5 +39,4 @@ public interface ProductService {
 
     //    Вернуть среднюю стоимость продукта в базе данных (из активных).
     BigDecimal getAllActiveProductsAveragePrice();
-
 }
