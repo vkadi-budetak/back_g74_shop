@@ -14,5 +14,6 @@ logging:
   file:
     name: logs/log.log
   level:
-    root: debug
+    root: info
+# или    root: debug
 

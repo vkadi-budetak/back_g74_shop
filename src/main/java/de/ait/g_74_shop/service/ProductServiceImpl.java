@@ -5,6 +5,7 @@ import de.ait.g_74_shop.dto.mapping.ProductMapper;
 import de.ait.g_74_shop.dto.product.ProductDto;
 import de.ait.g_74_shop.dto.product.ProductSaveDto;
 import de.ait.g_74_shop.dto.product.ProductUpdateDto;
+import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
 import de.ait.g_74_shop.repository.ProductRepository;
 import de.ait.g_74_shop.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 
 /*
 Что происходит при старте приложения:
@@ -52,6 +54,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto save(ProductSaveDto saveDto) {
+        Objects.requireNonNull(saveDto, "ProductSaveDto cannot be null");
+
         // коли зберігаємо продукт в базу значить він спочатку активний
         Product entity = mapper.mapDtoToEntity(saveDto);
         entity.setActive(true);
@@ -77,10 +81,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Product getActiveEntityById(Long id) {
+        Objects.requireNonNull(id, "Product id cannot be null");
+
         // в репозиторію ств findByIdAndActiveTrue
 //        return repository.findByIdAndActiveTrue(id).orElse(null);
         // orElse - повертає сам продукт якщо він знайшовся або null якщо він знайшовся але не автивний
-        return repository.findByIdAndActiveTrue(id).orElse(null);
+        return repository.findByIdAndActiveTrue(id).orElseThrow(
+                () -> new EntityNotFoundException(Product.class, id)
+        );
     }
 
 
@@ -99,8 +107,14 @@ public class ProductServiceImpl implements ProductService {
     // і в базі і в обєкті потрібно прописати цю транзакцію)
     @Transactional
     public void update(Long id, ProductUpdateDto updateDto) {
+        Objects.requireNonNull(id, "Product id cannot be null");
+        Objects.requireNonNull(updateDto, "Product ProductUpdateDto cannot be null");
+
         repository.findById(id)
-                .ifPresent(x -> x.setPrice(updateDto.getNewPrice()));
+                .orElseThrow(() -> new EntityNotFoundException(Product.class, id))
+                .setPrice(updateDto.getNewPrice());
+
+//                .ifPresent(x -> x.setPrice(updateDto.getNewPrice()));
         // findById(id): Spring Data JPA йде в базу і шукає рядок з цим ID. Повертає Optional<Customer>
         // ifPresent - якщо є щось в коробці (Option), тобто продукт знайдений,
         // до нього відпрацьовує функція. Якщо нічого не знайшлося, то ifPresent не відпрацює.
@@ -108,7 +122,6 @@ public class ProductServiceImpl implements ProductService {
 
         // прописуємо подію logger вручну
         logger.info("Product id {} updated, new price: {}", id, updateDto.getNewPrice());
-
     }
 
     @Override
@@ -116,11 +129,7 @@ public class ProductServiceImpl implements ProductService {
     // а і ще відпрацювала і далі і внесла зміни у базі
     public void deleteById(Long id) {
         // ми повинні переключити на fals , тобто продукт повинен бути неактивний
-        Product product = getActiveEntityById(id); // ми знаходимо продукт в базі
-        if (product == null) {
-            return;
-        }
-        product.setActive(false);
+        getActiveEntityById(id).setActive(false);; // ми знаходимо продукт в базі
 
         // прописуємо подію logger вручну
         logger.info("Product id {} marked as inactive", id);
@@ -129,12 +138,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void restoreById(Long id) {
+        Objects.requireNonNull(id, "Product id cannot be null");
+
         repository.findById(id)
-                .ifPresent(x -> x.setActive(true));
+                .orElseThrow(() -> new EntityNotFoundException(Product.class, id))
+                .setActive(true);
 
         // прописуємо подію logger вручну
         logger.info("Product id {} marked as active", id);
-
     }
 
     @Override

@@ -1,6 +1,8 @@
 package de.ait.g_74_shop.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 
 import java.math.BigDecimal;
 
@@ -16,9 +18,33 @@ public class Product {
     @Column(name = "id") // де саме лежить id в якій колонці
     private Long id;
 
+    /* Використувуємо Pattern
+    Допустим мы хотим чтобы названия продуктов отвечаол след требованием:
+    1  Первая буква быть в верхнем регистре
+    2  Остальные буквы должны быть в нижнем регистре
+    3  Название продуктов должно быть не короче трех букв
+    4  Должно быть нельзя испольщовать спец символы и цифри. (Пробел можно)
+     */
+    @NotNull(message = "Product title cannot be null")
+    @NotBlank(message = "Product title cannot be empty")
+//    @Length(min = 3, max = 50)
+    @Pattern(
+            regexp = "[A-Z][a-z ]{2,}",
+            message = "Product title should be at least three characters length and start with capital letter"
+    )
     @Column(name = "title")
     private String title;
 
+
+    @NotNull(message = "Product price cannot be null")
+    @DecimalMin(
+            value = "0.0",
+            message = "Product price should be greater or equal than 0")
+    @DecimalMax(
+            value = "1000.00",
+            inclusive = false, // означає що 1000 не включена
+            message = "Product price should be lesser than 1000"
+    )
     @Column(name = "price")
     private BigDecimal price;
 
