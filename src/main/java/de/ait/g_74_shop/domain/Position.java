@@ -1,6 +1,8 @@
 package de.ait.g_74_shop.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
@@ -18,6 +20,9 @@ public class Position {
     // колонка називаєтсья - "product_id". анотація JoinColumn - яке саме поле буде посиланням на продукт. nullable = false - заборонені пусті значення
     private Product product;
 
+
+    @NotNull(message = "Quantity cannot be null")
+    @Min(value = 1, message = "Quantity must be at least 1")
     @Column(name = "quantity")
     private int quantity; // к-сть продуктів
 
@@ -30,6 +35,9 @@ public class Position {
     }
 
     public Position(Product product, int quantity, Cart cart) {
+        this.product = product;
+        this.quantity = quantity;
+        this.cart = cart;
     }
 
     public Long getId() {

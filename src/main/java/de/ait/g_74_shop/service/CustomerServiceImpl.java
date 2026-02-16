@@ -9,6 +9,8 @@ import de.ait.g_74_shop.dto.customer.CustomerSaveDto;
 import de.ait.g_74_shop.dto.customer.CustomerUpdateDto;
 import de.ait.g_74_shop.dto.mapping.CustomerMapper;
 import de.ait.g_74_shop.dto.position.PositionUpdateDto;
+import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
+import de.ait.g_74_shop.exceptions.types.EntityUpdateException;
 import de.ait.g_74_shop.repository.CustomerRepository;
 import de.ait.g_74_shop.service.interfaces.CustomerService;
 import de.ait.g_74_shop.service.interfaces.ProductService;
@@ -21,6 +23,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -40,6 +43,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerDto save(CustomerSaveDto saveDto) {
+        if (saveDto == null) {
+            throw new EntityUpdateException("Customer data cannot be null");
+        }
+
         Customer entity = mapper.mapDtoToEntity(saveDto);
 
         Cart cart = new Cart();
@@ -64,7 +71,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private Customer getActiveEntityById(Long id) {
-        return repository.findByIdAndActiveTrue(id).orElse(null);
+//        Objects.requireNonNull(id, "Customer id cannot be null");
+        if (id == null) {
+            throw new EntityUpdateException("Customer data cannot be null");
+        }
+
+        return repository.findByIdAndActiveTrue(id).orElseThrow(
+                () -> new EntityNotFoundException(Customer.class, id)
+        );
     }
 
     @Override
@@ -76,8 +90,20 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void update(Long id, CustomerUpdateDto updateDto) {
+//        Objects.requireNonNull(id, "Customer id cannot be null");
+//        Objects.requireNonNull(updateDto, "Customer CustomerUpdateDto cannot be null");
+        if (id == null) {
+            throw new EntityUpdateException("Customer ID cannot be null");
+        }
+        if (updateDto == null) {
+            throw new EntityUpdateException("Update data cannot be null");
+        }
+
+
+
         repository.findById(id)
-                .ifPresent(x -> x.setName(updateDto.getNewName()));
+                .orElseThrow(() -> new EntityNotFoundException(Customer.class, id))
+                .setName(updateDto.getNewName());
 
         // прописуємо подію logger вручну
         logger.info("Customer id {} updated, new name: {}", id, updateDto.getNewName());
@@ -86,11 +112,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        Customer customer = getActiveEntityById(id);
-        if (customer == null) {
-            return;
-        }
-        customer.setActive(false);
+        getActiveEntityById(id).setActive(false);
 
         // прописуємо подію logger вручну
         logger.info("Customer id {} marked as inactive", id);
@@ -163,20 +185,29 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void addProductToCustomerCart(Long customerId, Long productId, PositionUpdateDto positionUpdateDto) {
+        if (positionUpdateDto == null) {
+            throw new EntityUpdateException("Position data cannot be null");
+        }
+
+        // 2. Отримуємо сутності (якщо їх нема - вилетить EntityNotFoundException)
         Customer customer = getActiveEntityById(customerId);
         Product product = productService.getActiveEntityById(productId);
 
-        if (customer == null || product == null) {
-            return;
+        // 3. Валідація бізнес-логіки
+        if (positionUpdateDto.getQuantity() <= 0) {
+            throw new EntityUpdateException("Quantity must be positive");
         }
 
+        // 4. Шукаємо, чи є вже такий товар у кошику
         for (Position position : customer.getCart().getPositions()) {
             if (position.getProduct().equals(product)) {
                 position.setQuantity(position.getQuantity() + positionUpdateDto.getQuantity());
+                logger.info("Updated quantity for Product ID {} in Cart of Customer ID {}", productId, customerId);
                 return;
             }
         }
 
+        // 5. Якщо товару ще немає - створюємо нову позицію
         Cart cart = customer.getCart();
         Position position = new Position(product, positionUpdateDto.getQuantity(), cart);
         cart.getPositions().add(position);
@@ -189,19 +220,38 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void removeProductFromCustomerCart(Long customerId, Long productId, PositionUpdateDto positionUpdateDto) {
+        if (positionUpdateDto == null) {
+            throw new EntityUpdateException("PositionUpdateDto cannot be null");
+        }
+
+        // 2. Отримуємо сутності. Якщо їх немає - коди "вибухне" EntityNotFoundException автоматично
         Customer customer = getActiveEntityById(customerId);
         Product product = productService.getActiveEntityById(productId);
 
-        if (customer == null || product == null) {
-            return;
-        }
-
+        // 3. Шукаємо позицію в кошику
         Iterator<Position> iterator = customer.getCart().getPositions().iterator();
+        boolean found = false;
+
         while (iterator.hasNext()) {
             Position position = iterator.next();
             if (position.getProduct().equals(product)) {
-                if (position.getQuantity() > positionUpdateDto.getQuantity()) {
-                    position.setQuantity(position.getQuantity() - positionUpdateDto.getQuantity());
+                found = true;
+
+                int currentQuantity = position.getQuantity();
+                int quantityToRemove = positionUpdateDto.getQuantity();
+
+                // 4. ПЕРЕВІРКА: чи не намагається клієнт видалити більше, ніж має?
+                if (quantityToRemove > currentQuantity) {
+                    throw new EntityUpdateException(String.format(
+                            "Cannot remove %d items. Only %d items of product %s found in cart",
+                            quantityToRemove, currentQuantity, product.getTitle()));
+                }
+
+                // 5. Логіка видалення або зменшення
+                if (currentQuantity > quantityToRemove) {
+                    position.setQuantity(currentQuantity - quantityToRemove);
+                    logger.info("Product ID {} quantity reduced by {} for Customer ID {}",
+                            productId, quantityToRemove, customerId);
                 } else {
                     iterator.remove();
 
@@ -212,8 +262,10 @@ public class CustomerServiceImpl implements CustomerService {
                 break;
             }
         }
-
-
+        // 6. Якщо пройшли весь цикл і не знайшли товар у кошику
+        if (!found) {
+            throw new EntityUpdateException("Product with id " + productId + " is not in the customer's cart");
+        }
     }
 
     @Override

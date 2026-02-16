@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Product getActiveEntityById(Long id) {
-        Objects.requireNonNull(id, "Product id cannot be null");
+        Objects.requireNonNull(id, "Product id cannot be null"); // перевіряємо вхідні параметри
 
         // в репозиторію ств findByIdAndActiveTrue
 //        return repository.findByIdAndActiveTrue(id).orElse(null);
