@@ -4,8 +4,8 @@ spring:
     #   вказуємо реквізити підключення до бази
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${NAME}
-    username: ${DB_HOST}
+    url: jdbc:postgresql://localhost:5432/g_74_shop
+    username: postgres
     password: ${DB_PASSWORD} # <-- ств перемуну окружения (старе значення qwerty007)
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
