@@ -19,12 +19,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// @SpringBootTest - анотація із налаштуванням щоб запускався на рандомному порті
+// @SpringBootTest - анотація із налаштуванням, щоб запускався на рандомному порті
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductControllerTestIT {
 
     @Autowired
-    private TestRestTemplate httpClient; // Обєкт вміє відправляти http запроси автоматично
+    private TestRestTemplate httpClient; // Об'єкт вміє відправляти http запроси автоматично
 
     /// репозиторій продукта
     @Autowired
