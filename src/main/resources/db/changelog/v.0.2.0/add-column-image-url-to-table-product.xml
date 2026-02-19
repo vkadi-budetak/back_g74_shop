@@ -4,7 +4,15 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="v.0.1.0/changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v.0.2.0/changelog.xml" relativeToChangelogFile="true"/>
+    <changeSet id="add-column-image-url-to-table-product" author="Vladyslav Kravchenko">
+
+        <addColumn tableName="product">
+            <column name="image_url" type="varchar(500)">
+                <constraints unique="false" nullable="true"/>
+            </column>
+        </addColumn>
+
+
+    </changeSet>
 
 </databaseChangeLog>

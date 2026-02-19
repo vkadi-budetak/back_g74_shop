@@ -51,6 +51,9 @@ public class Product {
     @Column(name = "active")
     private boolean active; // прописуємо чи в продажі товар чи ні
 
+    @Column(name = "image_url")
+    private String imageUrl; // прописуємо змінну де буде зберігати посилання на картинку
+
     //    генеруємо пустий конструктор для jekson
     public Product() {
     }
@@ -88,6 +91,13 @@ public class Product {
         this.active = active;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     // Коли генеруємо equals і hashCode потрібно вибрати:
     // Вибрати instance expression -> вибираємо тільки id: Long

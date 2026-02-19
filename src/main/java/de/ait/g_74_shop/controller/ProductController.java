@@ -6,6 +6,7 @@ import de.ait.g_74_shop.dto.product.ProductUpdateDto;
 import de.ait.g_74_shop.service.interfaces.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ProductController {
     public ProductDto getById(@PathVariable Long id) {
 //        System.out.println("Запрошен продукт с ид " + id);
 //        return null;
-       return service.getActiveProductById(id);
+        return service.getActiveProductById(id);
     }
 
     /// Изменить один продукт в базе данных по его идентификатору.
@@ -100,5 +101,13 @@ public class ProductController {
     @GetMapping("/avg")
     public BigDecimal getProductAveragePrice() {
         return service.getAllActiveProductsAveragePrice();
+    }
+
+
+    // Добавить картинку к конкретному продукту по идентификатору
+    // POST -> http://10.20.30.40:8080/products/5/image
+    @PostMapping(value = "/{id}/image", consumes = "multipart/form-data")
+    public void addImage(@PathVariable Long id, @RequestParam MultipartFile image) {
+        service.addImage(id, image);
     }
 }

@@ -9,6 +9,7 @@ public class ProductDto {
     private Long id;
     private String title;
     private BigDecimal price;
+    private String imageUrl;
 
     // конструктор
     public ProductDto() {
@@ -36,6 +37,14 @@ public class ProductDto {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override

@@ -2,6 +2,7 @@ package de.ait.g_74_shop.exceptions;
 
 import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
 import de.ait.g_74_shop.exceptions.types.EntityUpdateException;
+import de.ait.g_74_shop.exceptions.types.FileUploadException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -50,11 +51,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityUpdateException.class)
-    public ResponseEntity<String> handleEntityUpdateException(EntityUpdateException e) {
+    public ResponseEntity<String> handleException(EntityUpdateException e) {
         String message = e.getMessage();
-        // Логуємо на рівень WARN за завданням
-        logger.warn("Update error: {}", message);
-        // Повертаємо клієнту статус 400 (Bad Request)
+        logger.warn(message, e);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<String> handleException(FileUploadException e) {
+        String message = e.getMessage();
+        logger.warn(message, e);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

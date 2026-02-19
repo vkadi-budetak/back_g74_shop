@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -129,7 +130,8 @@ public class ProductServiceImpl implements ProductService {
     // а і ще відпрацювала і далі і внесла зміни у базі
     public void deleteById(Long id) {
         // ми повинні переключити на fals , тобто продукт повинен бути неактивний
-        getActiveEntityById(id).setActive(false);; // ми знаходимо продукт в базі
+        getActiveEntityById(id).setActive(false);
+        ; // ми знаходимо продукт в базі
 
         // прописуємо подію logger вручну
         logger.info("Product id {} marked as inactive", id);
@@ -180,5 +182,15 @@ public class ProductServiceImpl implements ProductService {
 
         // сума всіх продуктів ділимо(divide) на їх к-сть округляємо до 2 знаків,
         // а сам метод заокркглення називається RoundingMode.HALF_UP)
+    }
+
+    @Override
+    public void addImage(long id, MultipartFile image) {
+        Objects.requireNonNull(id, "Product id cannot be null");
+
+        Product product = getActiveEntityById(id);
+        // Здесь будет обращение к сервису и получения ссылке на файл
+        // Здесь будет присвоение этой ссылке нашему продукту
+
     }
 }

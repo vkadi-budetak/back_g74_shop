@@ -4,6 +4,7 @@ import de.ait.g_74_shop.domain.Product;
 import de.ait.g_74_shop.dto.product.ProductDto;
 import de.ait.g_74_shop.dto.product.ProductSaveDto;
 import de.ait.g_74_shop.dto.product.ProductUpdateDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,4 +40,7 @@ public interface ProductService {
 
     //    Вернуть среднюю стоимость продукта в базе данных (из активных).
     BigDecimal getAllActiveProductsAveragePrice();
+
+    // Добавления изображения к продукту
+    void addImage(long id, MultipartFile image);
 }
