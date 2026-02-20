@@ -7,6 +7,7 @@ import de.ait.g_74_shop.dto.product.ProductSaveDto;
 import de.ait.g_74_shop.dto.product.ProductUpdateDto;
 import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
 import de.ait.g_74_shop.repository.ProductRepository;
+import de.ait.g_74_shop.service.interfaces.FileService;
 import de.ait.g_74_shop.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -46,11 +48,13 @@ public class ProductServiceImpl implements ProductService {
     // ми пишемо поле репозиотрія, але самі не ств обєкт репозиторія. Він ств при запуску проекта самостійно!
     private final ProductRepository repository;
     private final ProductMapper mapper;
+    private final FileService fileService;
 
     // ств конструктор
-    public ProductServiceImpl(ProductRepository repository, ProductMapper mapper) {
+    public ProductServiceImpl(ProductRepository repository, ProductMapper mapper, FileService fileService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.fileService = fileService;
     }
 
     @Override
@@ -185,12 +189,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addImage(long id, MultipartFile image) {
+    @Transactional
+    public void addImage(long id, MultipartFile image) throws IOException {
         Objects.requireNonNull(id, "Product id cannot be null");
 
         Product product = getActiveEntityById(id);
+        String imageUrl = fileService.uploadAndGetUrl(image);
         // Здесь будет обращение к сервису и получения ссылке на файл
         // Здесь будет присвоение этой ссылке нашему продукту
-
+        product.setImageUrl(imageUrl);
     }
 }

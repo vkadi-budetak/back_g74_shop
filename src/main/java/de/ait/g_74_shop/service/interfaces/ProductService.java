@@ -6,6 +6,7 @@ import de.ait.g_74_shop.dto.product.ProductSaveDto;
 import de.ait.g_74_shop.dto.product.ProductUpdateDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -42,5 +43,5 @@ public interface ProductService {
     BigDecimal getAllActiveProductsAveragePrice();
 
     // Добавления изображения к продукту
-    void addImage(long id, MultipartFile image);
+    void addImage(long id, MultipartFile image) throws IOException;
 }
