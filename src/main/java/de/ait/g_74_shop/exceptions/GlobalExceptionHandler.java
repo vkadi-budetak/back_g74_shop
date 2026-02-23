@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
 import java.util.List;
 
 // глобальний клас для обробки помилок
@@ -37,6 +38,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 HttpStatus.INTERNAL_SERVER_ERROR); // повертаємо статус внутрушньої помилки сервера
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleException(IOException e) {
+        String message = e.getMessage();
+        logger.error(message, e);
+        return new ResponseEntity<>(
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

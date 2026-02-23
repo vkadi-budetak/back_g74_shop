@@ -4,7 +4,9 @@ import de.ait.g_74_shop.dto.customer.CustomerDto;
 import de.ait.g_74_shop.dto.customer.CustomerSaveDto;
 import de.ait.g_74_shop.dto.customer.CustomerUpdateDto;
 import de.ait.g_74_shop.dto.position.PositionUpdateDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -45,4 +47,6 @@ public interface CustomerService {
 
     //    Полностью очистить корзину покупателя по его идентификатору.
     void clearCustomerCart(Long id);
+
+    void addAvatar(Long id, MultipartFile avatar) throws IOException;
 }

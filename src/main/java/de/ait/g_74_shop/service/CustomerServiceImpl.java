@@ -13,12 +13,15 @@ import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
 import de.ait.g_74_shop.exceptions.types.EntityUpdateException;
 import de.ait.g_74_shop.repository.CustomerRepository;
 import de.ait.g_74_shop.service.interfaces.CustomerService;
+import de.ait.g_74_shop.service.interfaces.FileService;
 import de.ait.g_74_shop.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Iterator;
@@ -33,11 +36,13 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository repository;
     private final ProductService productService;
     private final CustomerMapper mapper;
+    private final FileService fileService;
 
-    public CustomerServiceImpl(CustomerRepository repository, ProductService productService, CustomerMapper mapper) {
+    public CustomerServiceImpl(CustomerRepository repository, ProductService productService, CustomerMapper mapper, FileService fileService) {
         this.repository = repository;
         this.productService = productService;
         this.mapper = mapper;
+        this.fileService = fileService;
     }
 
     @Override
@@ -281,5 +286,16 @@ public class CustomerServiceImpl implements CustomerService {
 
         // прописуємо подію logger вручну
         logger.info("Cart for Customer ID {} has been fully cleared.", id);
+    }
+
+
+    @Override
+    @Transactional
+    public void addAvatar(Long id, MultipartFile avatar) throws IOException {
+        Objects.requireNonNull(id, "Product ID cannot be null");
+
+        Customer customer = getActiveEntityById(id);
+        String avatarUrl = fileService.uploadAndGetUrl(avatar);
+        customer.setAvatarUrl(avatarUrl);
     }
 }

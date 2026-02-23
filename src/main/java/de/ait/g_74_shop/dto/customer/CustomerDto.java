@@ -7,6 +7,7 @@ public class CustomerDto {
     private Long id;
     private String name;
     private CartDto cart;
+    private String avatarUrl;
 
     public CustomerDto() {
     }
@@ -33,6 +34,14 @@ public class CustomerDto {
 
     public void setCart(CartDto cart) {
         this.cart = cart;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @Override

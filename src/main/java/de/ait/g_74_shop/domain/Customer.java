@@ -16,11 +16,11 @@ public class Customer {
     @Column(name = "id")
     private Long id;
 
-    @NotNull(message = "Customer title cannot be null")
-    @NotBlank(message = "Customer title cannot be empty")
+    @NotNull(message = "Customer name cannot be null")
+    @NotBlank(message = "Customer name cannot be empty")
     @Pattern(
             regexp = "[A-Z][a-z ]{1,}",
-            message = "Customer title should be at least two characters length and start with capital letter"
+            message = "Customer name should be at least three characters length and start with capital letter"
     )
     @Column(name = "name")
     private String name;
@@ -30,6 +30,9 @@ public class Customer {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "customer")
     private Cart cart;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
     public Customer() {
     }
@@ -64,6 +67,14 @@ public class Customer {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @Override

@@ -14,64 +14,123 @@ public class AspectLogging {
 
     private final Logger logger = LoggerFactory.getLogger(AspectLogging.class);
 
-    @Pointcut("execution(* de.ait.g_74_shop.service..*(..))") // прописуємо правила до який методів ми чіпляємся
-    public void anyServiceMethod() {
-    }
+    @Pointcut("execution(* de.ait.g_74_shop.service..*(..))")
+    public void anyMethodInAnyService() {}
 
-    // Прописуємо Advice Before перед логікою
-    @Before("anyServiceMethod()")
-    public void beforeAnyMethodInProductService(JoinPoint joinPoint) {
+    @Before("anyMethodInAnyService()")
+    public void beforeAnyMethodInAnyService(JoinPoint joinPoint) {
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
-        Object[] args = joinPoint.getArgs(); // Достає всі аргументи
-
+        Object[] args = joinPoint.getArgs();
         logger.debug("Method {} of the class {} called with arguments: {}",
                 methodName, className, Arrays.toString(args));
     }
-    // Выводить все аргументы подряд - опасно!
-    // 1. В аргументах могут быть очень большие объекты.
-    // 2. В аргументах могут быть секреты.
 
-    @AfterReturning(pointcut = "anyServiceMethod()", returning = "result")
-    public void afterReturning(JoinPoint joinPoint, Object result) {
+    @After("anyMethodInAnyService()")
+    public void afterAnyMethodInAnyService(JoinPoint joinPoint) {
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
-
-
-        logger.debug("Method {} of the class {} returned result: {}",
-                methodName, className, result);
-    }
-
-    @AfterThrowing(pointcut = "anyServiceMethod()", throwing = "e")
-    public void afterThrowing(JoinPoint joinPoint, Exception e) {
-        String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
-
-        logger.warn("Method {} of the class {} threw an exception: {}",
-                methodName, className, e.getMessage());
+        logger.debug("Method {} of the class {} finished its work", methodName, className);
     }
 
     @AfterReturning(
-            pointcut = "anyServiceMethod()",
+            pointcut = "anyMethodInAnyService()",
             returning = "result"
     )
-    public void afterReturningAnyMethodInProductService(JoinPoint joinPoint, Object result) {
+    public void afterReturningAnyMethodInAnyService(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();
-        logger.debug("Method {} of the class ProductServiceImpl returned result: {}",
-                methodName, result);
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        logger.debug("Method {} of the class {} successfully returned result: {}",
+                methodName, className, result);
     }
 
-
-    // Адвайс щоб бачити яку помилку видає
     @AfterThrowing(
-            pointcut = "anyServiceMethod()",
+            pointcut = "anyMethodInAnyService()",
             throwing = "e"
     )
-    public void afterThrowingAnyMethodInProductService(JoinPoint joinPoint, Exception e) {
+    public void afterThrowingAnyMethodInAnyService(JoinPoint joinPoint, Exception e) {
         String methodName = joinPoint.getSignature().getName();
-        logger.warn("Method {} of the class ProductServiceImpl threw an exception",
-                methodName, e);
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        logger.warn("Method {} of the class {} threw an exception",
+                methodName, className, e);
     }
-
-    // @Around
 }
+
+
+//package de.ait.g_74_shop.logging;
+//
+//import org.aspectj.lang.JoinPoint;
+//import org.aspectj.lang.annotation.*;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.stereotype.Component;
+//
+//import java.util.Arrays;
+//
+//@Aspect
+//@Component
+//public class AspectLogging {
+//
+//    private final Logger logger = LoggerFactory.getLogger(AspectLogging.class);
+//
+//    @Pointcut("execution(* de.ait.g_74_shop.service..*(..))") // прописуємо правила до який методів ми чіпляємся
+//    public void anyServiceMethod() {
+//    }
+//
+//    // Прописуємо Advice Before перед логікою
+//    @Before("anyServiceMethod()")
+//    public void beforeAnyMethodInProductService(JoinPoint joinPoint) {
+//        String methodName = joinPoint.getSignature().getName();
+//        String className = joinPoint.getTarget().getClass().getSimpleName();
+//        Object[] args = joinPoint.getArgs(); // Достає всі аргументи
+//
+//        logger.debug("Method {} of the class {} called with arguments: {}",
+//                methodName, className, Arrays.toString(args));
+//    }
+//    // Выводить все аргументы подряд - опасно!
+//    // 1. В аргументах могут быть очень большие объекты.
+//    // 2. В аргументах могут быть секреты.
+//
+//    @AfterReturning(pointcut = "anyServiceMethod()", returning = "result")
+//    public void afterReturning(JoinPoint joinPoint, Object result) {
+//        String methodName = joinPoint.getSignature().getName();
+//        String className = joinPoint.getTarget().getClass().getSimpleName();
+//
+//
+//        logger.debug("Method {} of the class {} returned result: {}",
+//                methodName, className, result);
+//    }
+//
+//    @AfterThrowing(pointcut = "anyServiceMethod()", throwing = "e")
+//    public void afterThrowing(JoinPoint joinPoint, Exception e) {
+//        String methodName = joinPoint.getSignature().getName();
+//        String className = joinPoint.getTarget().getClass().getSimpleName();
+//
+//        logger.warn("Method {} of the class {} threw an exception: {}",
+//                methodName, className, e.getMessage());
+//    }
+//
+//    @AfterReturning(
+//            pointcut = "anyServiceMethod()",
+//            returning = "result"
+//    )
+//    public void afterReturningAnyMethodInProductService(JoinPoint joinPoint, Object result) {
+//        String methodName = joinPoint.getSignature().getName();
+//        logger.debug("Method {} of the class ProductServiceImpl returned result: {}",
+//                methodName, result);
+//    }
+//
+//
+//    // Адвайс щоб бачити яку помилку видає
+//    @AfterThrowing(
+//            pointcut = "anyServiceMethod()",
+//            throwing = "e"
+//    )
+//    public void afterThrowingAnyMethodInProductService(JoinPoint joinPoint, Exception e) {
+//        String methodName = joinPoint.getSignature().getName();
+//        logger.warn("Method {} of the class ProductServiceImpl threw an exception",
+//                methodName, e);
+//    }
+//
+//    // @Around
+//}

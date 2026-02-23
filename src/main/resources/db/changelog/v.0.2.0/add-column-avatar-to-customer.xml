@@ -4,11 +4,14 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="add-db-tag-v.0.2.0" author="Vladyslav Kravchenko">
-        <tagDatabase tag="v.0.2.0"/>
-    </changeSet>
+    <changeSet id="add-column-avatar-to-customer" author="Vladyslav Kravchenko">
 
-    <include file="add-column-image-url-to-table-product.xml" relativeToChangelogFile="true"/>
-    <include file="add-column-avatar-to-customer.xml" relativeToChangelogFile="true"/>
+        <addColumn tableName="customer">
+            <column name="avatar_url" type="varchar(500)">
+                <constraints unique="false" nullable="true"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
 
 </databaseChangeLog>

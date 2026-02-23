@@ -9,7 +9,9 @@ import de.ait.g_74_shop.dto.position.PositionUpdateDto;
 import de.ait.g_74_shop.service.interfaces.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -131,5 +133,8 @@ public class CustomerController {
         service.clearCustomerCart(id);
     }
 
-
+    @PostMapping(value = "/{id}/avatar", consumes = "multipart/form-data")
+    public void addAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) throws IOException {
+        service.addAvatar(id, avatar);
+    }
 }
