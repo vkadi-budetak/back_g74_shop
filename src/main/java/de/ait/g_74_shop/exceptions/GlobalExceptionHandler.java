@@ -1,5 +1,6 @@
 package de.ait.g_74_shop.exceptions;
 
+import de.ait.g_74_shop.exceptions.types.AuthorizationException;
 import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
 import de.ait.g_74_shop.exceptions.types.EntityUpdateException;
 import de.ait.g_74_shop.exceptions.types.FileUploadException;
@@ -73,5 +74,12 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         logger.warn(message, e);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<String> handleException(AuthorizationException e) {
+        String message = e.getMessage();
+        logger.warn(message, e);
+        return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
     }
 }
