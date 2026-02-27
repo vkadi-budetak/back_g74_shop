@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +38,6 @@ public class TokenService {
         return generateToken(email, refreshKey, 24 * 60 * 60 * 1000);
     }
 
-
     // генеруємо токен - універсальний, який вміє генерувати 2 токена
     private String generateToken(String email, SecretKey key, int expirationMillis) {
         Date now = new Date();
@@ -47,6 +48,14 @@ public class TokenService {
                 .expiration(expiration)
                 .signWith(key)
                 .compact();
+    }
+
+    public boolean validateAccessToken(String accessToken) {
+        return validateToken(accessToken, accessKey);
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        return validateToken(refreshToken, refreshKey);
     }
 
     private boolean validateToken(String token, SecretKey key) {
@@ -76,4 +85,18 @@ public class TokenService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    public String getTokenFromRequest(HttpServletRequest request, String tokenName) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (tokenName.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
 }
