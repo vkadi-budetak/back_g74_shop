@@ -1,9 +1,6 @@
 package de.ait.g_74_shop.exceptions;
 
-import de.ait.g_74_shop.exceptions.types.AuthorizationException;
-import de.ait.g_74_shop.exceptions.types.EntityNotFoundException;
-import de.ait.g_74_shop.exceptions.types.EntityUpdateException;
-import de.ait.g_74_shop.exceptions.types.FileUploadException;
+import de.ait.g_74_shop.exceptions.types.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -81,5 +78,12 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         logger.warn(message, e);
         return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<String> handleException(RegistrationException e) {
+        String message = e.getMessage();
+        logger.warn(message, e);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

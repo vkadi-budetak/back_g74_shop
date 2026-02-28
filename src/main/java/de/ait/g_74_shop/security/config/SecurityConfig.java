@@ -34,12 +34,14 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x -> x
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "products").permitAll()
-                        .requestMatchers(HttpMethod.GET, "products/{id:\\d+}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products/{id:\\d+}").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.POST, "auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "auth/access").permitAll()
-                        .requestMatchers(HttpMethod.POST, "auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/access").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/logout").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
 
                         .anyRequest().denyAll()
                 )
