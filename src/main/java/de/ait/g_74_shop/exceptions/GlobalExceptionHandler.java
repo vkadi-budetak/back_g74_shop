@@ -86,4 +86,14 @@ public class GlobalExceptionHandler {
         logger.warn(message, e);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<String> handleException(EmailSendingException e) {
+        String message = e.getMessage();
+        logger.error(message, e);
+        return new ResponseEntity<>(
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
 }

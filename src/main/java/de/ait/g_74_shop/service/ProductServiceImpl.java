@@ -199,4 +199,6 @@ public class ProductServiceImpl implements ProductService {
         // Здесь будет присвоение этой ссылке нашему продукту
         product.setImageUrl(imageUrl);
     }
+
+
 }

@@ -6,6 +6,7 @@ import de.ait.g_74_shop.dto.user.UserRegistrationDto;
 import de.ait.g_74_shop.exceptions.types.RegistrationException;
 import de.ait.g_74_shop.repository.UserRepository;
 import de.ait.g_74_shop.security.AuthUserDetails;
+import de.ait.g_74_shop.service.interfaces.EmailService;
 import de.ait.g_74_shop.service.interfaces.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,11 +18,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private EmailService emailService;
 
 
-    public UserServiceImpl(UserRepository repository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository repository, BCryptPasswordEncoder passwordEncoder, EmailService emailService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     // буде при виклику цього методу діставати юзера із бази і пароль
@@ -63,5 +66,7 @@ public class UserServiceImpl implements UserService {
 
         repository.save(user);
         // отправляем пользователю письмо о том что он должен подтвердить регистрацию
+
+        emailService.sendConfirmationEmail(user);
     }
 }

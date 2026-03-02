@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +29,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, TokenFilter filter) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(x -> x
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(
+                                "/auth/login",
+                                "/auth/access",
+                                "/v3/api-docs/",
+                                "/swagger-ui/",
+                                "/swagger-ui.html"))
                 .sessionManagement(x -> x
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -40,8 +48,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/access").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/logout").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/csrf").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+
+                        .requestMatchers(
+                                "/v3/api-docs/",
+                                "/swagger-ui/",
+                                "/swagger-ui.html"
+                        ).permitAll()
 
                         .anyRequest().denyAll()
                 )
